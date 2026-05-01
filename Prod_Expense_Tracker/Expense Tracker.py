@@ -173,10 +173,10 @@ class ExpenseTracker:
         conn.close()
 
         if not rows:
-            print("\n📭 No expenses to summarize yet.\n")
+            print("\n No expenses to summarize yet.\n")
             return
 
-        print("\n📊 EXPENSE SUMMARY BY CATEGORY")
+        print("\n EXPENSE SUMMARY BY CATEGORY")
         print("=" * 45)
         print(f"{'Category':<20} {'Total':>10} {'Count':>8}")
         print("=" * 45)
