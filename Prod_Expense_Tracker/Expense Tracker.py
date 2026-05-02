@@ -1,19 +1,10 @@
 import sqlite3
 from datetime import datetime
 
-
-# ============================================================
-# DATABASE SETUP
-# sqlite3.connect() creates the .db file if it doesn't exist.
-# The connection object 'conn' is our link to the database.
-# A 'cursor' is what actually runs SQL commands.
-# ============================================================
-
 def init_db():
     conn = sqlite3.connect("expenses.db")
     cursor = conn.cursor()
 
-    # CREATE TABLE IF NOT EXISTS = only creates once, safe to call every run
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS expenses (
             id        INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -29,12 +20,6 @@ def init_db():
     return
 
 
-# ============================================================
-# EXPENSE TRACKER CLASS
-# All database operations are methods inside this class.
-# __init__ runs automatically when you create an object.
-# ============================================================
-
 class ExpenseTracker:
 
     def __init__(self):
@@ -45,12 +30,6 @@ class ExpenseTracker:
         # Helper method — avoids repeating connect() everywhere
         return sqlite3.connect(self.db_name)
 
-    # --------------------------------------------------------
-    # ADD EXPENSE
-    # INSERT INTO adds a new row to the table.
-    # We use ? placeholders (never put values directly in SQL
-    # strings — that's a security risk called SQL Injection).
-    # --------------------------------------------------------
     def add_expense(self, title, amount, category):
         conn = self.get_connection()
         cursor = conn.cursor()
@@ -66,12 +45,6 @@ class ExpenseTracker:
         conn.close()
         print(f"\n Expense '{title}' of ₹{amount:.2f} added successfully!\n")
 
-    # --------------------------------------------------------
-    # VIEW ALL EXPENSES
-    # SELECT * FROM = fetch every row from the table.
-    # fetchall() returns a list of tuples.
-    # Each tuple = one row: (id, title, amount, category, date)
-    # --------------------------------------------------------
     def view_expenses(self):
         conn = self.get_connection()
         cursor = conn.cursor()
@@ -98,11 +71,6 @@ class ExpenseTracker:
         print(f"{'TOTAL':<26} ₹{total:>9.2f}")
         print("=" * 60 + "\n")
 
-    # --------------------------------------------------------
-    # VIEW BY CATEGORY
-    # WHERE clause filters rows — only fetch matching category.
-    # LIKE with % = partial match (so "food" matches "Food" too)
-    # --------------------------------------------------------
     def view_by_category(self, category):
         conn = self.get_connection()
         cursor = conn.cursor()
@@ -134,11 +102,6 @@ class ExpenseTracker:
         print("-" * 60)
         print(f"{'TOTAL':<26} ₹{total:>9.2f}\n")
 
-    # --------------------------------------------------------
-    # DELETE EXPENSE
-    # DELETE FROM removes a row. We match by id (unique).
-    # cursor.rowcount tells us if any row was actually deleted.
-    # --------------------------------------------------------
     def delete_expense(self, expense_id):
         conn = self.get_connection()
         cursor = conn.cursor()
@@ -153,11 +116,6 @@ class ExpenseTracker:
 
         conn.close()
 
-    # --------------------------------------------------------
-    # SUMMARY — total spent per category
-    # GROUP BY groups rows with same category together.
-    # SUM(amount) adds up amounts within each group.
-    # --------------------------------------------------------
     def summary(self):
         conn = self.get_connection()
         cursor = conn.cursor()
@@ -189,12 +147,6 @@ class ExpenseTracker:
         print("-" * 45)
         print(f"{'GRAND TOTAL':<20} ₹{grand_total:>9.2f}\n")
 
-
-# ============================================================
-# HELPER — safe input functions
-# These prevent crashes when user types wrong input.
-# ============================================================
-
 def get_float_input(prompt):
     while True:
         try:
@@ -213,12 +165,6 @@ def get_int_input(prompt):
         except ValueError:
             print("  Please enter a valid number.")
 
-
-# ============================================================
-# MAIN MENU — the CLI loop
-# while True keeps the program running until user exits.
-# Each option calls a method on the tracker object.
-# ============================================================
 
 def main():
     tracker = ExpenseTracker()  # Create one tracker object for the whole session
@@ -269,13 +215,5 @@ def main():
 
         else:
             print("\n  Invalid choice. Please enter 1-6.\n")
-
-
-# ============================================================
-# Entry point
-# This block only runs when you execute this file directly.
-# If someone imports this file, main() won't auto-run.
-# ============================================================
-
 if __name__ == "__main__":
     main()
